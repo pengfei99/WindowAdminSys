@@ -99,6 +99,28 @@ sudo -u postgres psql -c "SELECT version();"
 (1 row)
 ```
 
+### 1.3 configure postgres
+
+There are two main conf you need to modify to allow remote access:
+- **pg_hba.conf**: default location: `/etc/postgresql/16/main/pg_hba.conf`
+- **postgresql.conf**: default location `/etc/postgresql/16/main/postgresql.conf`
+
+```shell
+# allow remote access
+sudo vim /etc/postgresql/16/main/postgresql.conf
+
+# find the below line, set the default value localhost to *
+listen_addresses = '*' 
+```
+
+```shell
+sudo vim /etc/postgresql/16/main/pg_hba.conf
+
+# allow remote password connection
+host    all             all             0.0.0.0/0           md5
+```
+
+
 ## 2. Create db
 You need to log in to the `PostgreSQL terminal` with an `admin account`, then run the below commands
 
@@ -114,14 +136,20 @@ CREATE DATABASE airflow;
 You need to log in to the `PostgreSQL terminal` with an `admin account`, then run the below commands
 ```shell
 # create user pliu with pwd toto
-CREATE USER pliu WITH PASSWORD 'toto';
+CREATE USER <user_name> WITH PASSWORD <pwd>;
 
 # change user password
 ALTER USER 'user_name' WITH PASSWORD 'new_password';
+
+# grant user access to db 
+GRANT ALL PRIVILEGES ON DATABASE <db_name> TO <user_name>;
 ```
 
 ## 4. Connect to the db with the user account
 
 ```shell
-psql -U <admin-user-name> -d <db-name> -h <host-url>
+psql -U <user-name> -d <db-name> -h <host-url>
+
+# for example login to db airflow with user airflow
+psql -U airflow -d airflow -h localhost
 ```
