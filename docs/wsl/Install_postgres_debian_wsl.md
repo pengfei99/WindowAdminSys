@@ -71,26 +71,42 @@ curl -fsSL https://www.postgresql.org/media/keys/ACCC4CF8.asc|sudo gpg --dearmor
 # add repo to source list
 sudo sh -c 'echo "deb https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main" > /etc/apt/sources.list.d/pgdg.list'
 
+# you may need to install  lsb-release if the above command does not work
+sudo apt install lsb-release -y
+
 # update repo cache
 sudo apt update
 
 # install
 sudo apt install postgresql-16
 
-# set up as system boot
+# set up as system boot, you need to enable systemd in wsl first.
 sudo systemctl start postgresql@16-main.service && sudo systemctl enable postgresql@16-main.service
+
+# check status
+sudo systemctl status postgresql@16-main.service
 
 # check client version
 psql --version
+# expected output
+psql (PostgreSQL) 16.9 (Debian 16.9-1.pgdg110+1)
 
 # check server version
 sudo -u postgres psql -c "SELECT version();"
+# expected output
+-----------------------------------------------------------------------------------------------------------------------------
+ PostgreSQL 16.9 (Debian 16.9-1.pgdg110+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 10.2.1-6) 10.2.1 20210110, 64-bit
+(1 row)
 ```
 
 ## 2. Create db
 You need to log in to the `PostgreSQL terminal` with an `admin account`, then run the below commands
 
 ```shell
+# login to the PostgreSQL terminal with default admin
+sudo -u postgres psql
+
+# create db
 CREATE DATABASE airflow;
 ```
 
